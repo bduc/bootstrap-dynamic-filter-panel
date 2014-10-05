@@ -54,33 +54,40 @@
         this.root
             .on('click.dynamic_filter', 'ul.dfw-field-list > li > a', 
                 $.proxy(function( event ) {
+                    event.preventDefault();
                     var f = this.addField( $(event.target).data('field') );
                     f.find('input.form-control').focus();
                 },this))
             
             .on('click.dynamic_filter', 'button.dfw-remove-filters',
                 $.proxy(function(event){
+                    event.preventDefault();
                     this.removeAllFields();
                     this.loadFilter(this.persistent_filter);
+                    this.root.find(".filter-element input").first().focus();
                 }, this) )
 
             .on('click.dynamic_filter', 'a.dfw-save',
                 $.proxy(function( event ) {
+                    event.preventDefault();
                     var name = prompt("Enter name:")
                     this.saveFilter( name );
                 }, this) )
     
             .on('click.dynamic_filter', 'ul.dfw-save-menu > li > a[data-preset]',
                 $.proxy(function( event ) {
-                    this.loadPresetFilter( $(event.target).data('preset') );    
+                    event.preventDefault();
+                    this.loadPresetFilter( $(event.target).data('preset') );
                 },this) )
 
             .on('click.dynamic_filter', 'ul.dfw-save-menu > li > a[data-saved]',
                 $.proxy(function( event ) {
+                    event.preventDefault();
                     this.loadSavedFilter( $(event.target).data('saved') );
                 },this) )
             .on('click.dynamic_filter', 'ul.dfw-save-menu > li > a > span.fa-trash',
                 $.proxy(function( event ) {
+                    event.preventDefault();
                     console.log('remove filter',event);
                     var name = $(event.target).closest("a[data-saved]").data('saved');
                     
@@ -201,7 +208,7 @@
                     {
                         label: '',
                         operators: ['=','~','<','>'],
-                        wrapper_class: 'col-xs-12 col-sm-6',
+                        wrapper_class: 'col-sm-9',
                         icon_class: '',
                         multiple: true,
                         removable: true
@@ -287,6 +294,7 @@
         }
 
         ,onFieldAction: function( event ) {
+            event.preventDefault();
             var wrapper_el = $(event.target).closest(".filter-element");
             var field = wrapper_el.data('field');
             var input_el = wrapper_el.find('input.form-control');
@@ -320,6 +328,7 @@
         }
         
         ,onChangeFieldOp: function( event ) {
+            event.preventDefault();
             var a_el = $(event.target);
             var wrapper_el = a_el.closest(".filter-element");
             var button_el = wrapper_el.find('button.dfw-field-op-btn');
