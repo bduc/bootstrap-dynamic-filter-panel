@@ -1,0 +1,33 @@
+{
+  "name": "bootstrap-dynamic-filter",
+  "dependencies": {
+    "underscore": ">=1.7.0",
+    "jquery": ">=1.10",
+    "bootstrap": ">=3.2.0"
+  },
+  "version": "0.0.1",
+  "authors": [
+    "Bart Duchesne <bduc@dyndaco.com>"
+  ],
+  "description": "A JQuery - Bootstrap 3 - Panel for building advanced filters.",
+  "main": [
+    "dynamic_filter.js",
+    "dynamic_filter.css"
+  ],
+  "keywords": [
+    "bootstrap",
+    "filter",
+    "search",
+    "jquery"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "assets/components",
+    "test",
+    "tests"
+  ]
+}

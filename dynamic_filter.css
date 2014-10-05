@@ -1,0 +1,17 @@
+.dynamic-filter {
+  background-color: #dddddd;
+
+  .field-selector {
+    padding-left: 2px;
+    padding-right: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+
+  .filter-element {
+    padding-left: 2px;
+    padding-right: 2px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+  }
+}
