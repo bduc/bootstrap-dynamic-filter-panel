@@ -32,8 +32,8 @@
                                 '<li class="dfw-preset dropdown-header">Presets</li>' +
                                 '<li class="dfw-saved  dropdown-header">Saved</li>' +
                             '</ul>' +
-                            '<button tabindex=-1 class="btn btn-sm btn-primary" type="submit">' +
-                            '<span class="fa fa-search"></span>' +
+                            '<button tabindex=-1 class="btn btn-sm btn-default" type="submit">' +
+                                '<span class="fa fa-search"></span>' +
                             '</button>' +
                         '</div>' +
                     '</div>' +
@@ -48,8 +48,15 @@
 
         this.container.html(template);
         this.root = this.container.find('.dynamic-filter').first();
-
+        
+        this.submit_button = this.root.find("button[type='submit']");
+        
         this.setOptions(options);
+
+        var self = this;
+        var debouncedSubmit = _.debounce( function() {
+            self.submit_button.trigger('click');
+        }, 500);
         
         this.root
             .on('click.dynamic_filter', 'ul.dfw-field-list > li > a', 
@@ -98,10 +105,34 @@
 
             .on('click.dynamic_filter',  '.filter-element a.dfw-field-action', 
                 $.proxy(this.onFieldAction,this) )
+            
+            .on('change.dynamic_filter',  '.filter-element input',
+                $.proxy(function( event ) {
+                    var wrapper_el = $(event.target).closest('.filter-element');
+                    this.adjustFieldAction( wrapper_el );
+                    var field = wrapper_el.data('field');
+                    this.submit_button.removeClass('btn-default').addClass('btn-primary');
+                    if( field == 'quick' ) {
+                        debouncedSubmit();
+                    }
+                },this) )
+
             .on('keyup.dynamic_filter',  '.filter-element input', 
                 $.proxy(function( event ) {
-                    this.adjustFieldAction( $(event.target).closest('.filter-element') );
+                    var wrapper_el = $(event.target).closest('.filter-element');
+                    this.adjustFieldAction( wrapper_el );
+                    var field = wrapper_el.data('field');
+                    this.submit_button.removeClass('btn-default').addClass('btn-primary');
+                    if( field == 'quick' ) {
+                        debouncedSubmit();                    
+                    }
                 },this) )
+            
+            .on('click.dynamic_filter',  'button[type=submit]',
+                $.proxy(function( event ) {
+                    this.submit_button.removeClass('btn-primary').addClass('btn-default');
+                },this) )
+                    
             .on('click.dynamic_filter',  '.dfw-field-op-list a', 
                 $.proxy(this.onChangeFieldOp,this) )
     };
@@ -407,14 +438,18 @@
     };
 
     $.fn.dynamic_filter = function( options ) {
-        this.each(function () {
-            var el = $(this);
+        if( _.isObject(options) ) {
+            this.each(function () {
+                var el = $(this);
 
-            if (el.data('dynamic_filter'))
-                el.data('dynamic_filter').remove();
+                if (el.data('dynamic_filter'))
+                    el.data('dynamic_filter').remove();
 
-            el.data('dynamic_filter', new DynamicFilter(el, $.extend({}, $.fn.dynamic_filter.defaults, options)));
-        });
+                el.data('dynamic_filter', new DynamicFilter(el, $.extend({}, $.fn.dynamic_filter.defaults, options)));
+            });
+        } else if( _.isUndefined(options) && this.length == 1 ) {
+            return $(this).data('dynamic_filter');            
+        }
         return this;
     };
 
