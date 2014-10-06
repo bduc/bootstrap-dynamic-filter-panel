@@ -32,10 +32,10 @@
                                 '<li class="dfw-preset dropdown-header">Presets</li>' +
                                 '<li class="dfw-saved  dropdown-header">Saved</li>' +
                             '</ul>' +
-                        '</div>' +
-                        '<button tabindex=-1 class="btn btn-sm btn-primary" type="submit">' +
+                            '<button tabindex=-1 class="btn btn-sm btn-primary" type="submit">' +
                             '<span class="fa fa-search"></span>' +
-                        '</button>' +
+                            '</button>' +
+                        '</div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
