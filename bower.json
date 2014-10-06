@@ -2,8 +2,7 @@
   "name": "bootstrap-dynamic-filter",
   "dependencies": {
     "underscore": ">=1.7.0",
-    "jquery": ">=1.10",
-    "bootstrap": ">=3.2.0"
+    "jquery": ">=1.10"
   },
   "version": "0.0.1",
   "authors": [
