@@ -1,8 +1,6 @@
 ;(function ($, _, window, document, undefined) {
     "use strict";
-
-    var nextUid=(function() { var counter=1; return function() { return counter++; }; }());
-
+    
     var DynamicFilter = function (element, options) {
         this.container = $(element);
 
@@ -79,6 +77,7 @@
                     event.preventDefault();
                     var name = prompt("Enter name:")
                     this.saveFilter( name );
+                    this.saveState();
                 }, this) )
     
             .on('click.dynamic_filter', 'ul.dfw-save-menu > li > a[data-preset]',
@@ -131,6 +130,7 @@
             .on('click.dynamic_filter',  'button[type=submit]',
                 $.proxy(function( event ) {
                     this.submit_button.removeClass('btn-primary').addClass('btn-default');
+                    this.saveState();
                 },this) )
                     
             .on('click.dynamic_filter',  '.dfw-field-op-list a', 
@@ -142,6 +142,8 @@
 
 
         ,setOptions: function(options) {
+            this.state_id = options.state_id;
+            
             if( _.isObject(options.fields) )
                 this.setFieldSpecs(options.fields);
             
@@ -269,7 +271,7 @@
             var value_name = "df[f][][v]";
             var op_name    = "df[f][][o]";
             
-            var id = field+'_'+nextUid();
+            var id = _.uniqueId(field);
 
             var op_list_markup = _.map(field_spec.operators, function( op ) {
                 return '<li><a data-op="' + op + '">' +  op + '</a></li>'
@@ -427,6 +429,10 @@
                 filter: this.getCurrentFilter(),
                 saved_filters: this.saved_filters ||[]
             } 
+        },
+        
+        saveState: function() {
+            StateManager.set(this.state_id, this.getState());        
         },
         
         applyState: function( state ) {
