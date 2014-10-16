@@ -156,6 +156,11 @@
             if(_.isArray(options.saved_filters) )
                 this.setSavedFilters(options.saved_filters);
 
+            if( options.store )
+                this.store = options.store;
+            else
+                this.store = window.store;
+            
             if(_.isArray(options.persistent_filter) ) {
                 this.persistent_filter = $.extend(true, [], options.persistent_filter);
                 this.loadFilter(this.persistent_filter);
@@ -436,7 +441,8 @@
         },
         
         saveState: function() {
-            StateManager.set(this.state_id, this.getState());        
+            if( this.store )
+                this.store.set(this.state_id, this.getState());        
         },
         
         applyState: function( state ) {
@@ -447,23 +453,23 @@
         }
     };
 
-    $.fn.dynamic_filter = function( options ) {
+    $.fn.dynamicFilter = function( options ) {
         if( _.isObject(options) ) {
             this.each(function () {
                 var el = $(this);
 
-                if (el.data('dynamic_filter'))
-                    el.data('dynamic_filter').remove();
+                if (el.data('dynamicFilter'))
+                    el.data('dynamicFilter').remove();
 
-                el.data('dynamic_filter', new DynamicFilter(el, $.extend({}, $.fn.dynamic_filter.defaults, options)));
+                el.data('dynamicFilter', new DynamicFilter(el, $.extend({}, $.fn.dynamicFilter.defaults, options)));
             });
         } else if( _.isUndefined(options) && this.length == 1 ) {
-            return $(this).data('dynamic_filter');            
+            return $(this).data('dynamicFilter');            
         }
         return this;
     };
 
-    $.fn.dynamic_filter.defaults = {
+    $.fn.dynamicFilter.defaults = {
     };
 
 }(jQuery, _, window, document));
