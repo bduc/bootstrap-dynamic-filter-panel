@@ -1,15 +1,21 @@
 .dynamic-filter {
- padding-left: 5px;
+ padding-left: 0px;
 }
 
 .dynamic-filter .field-selector {
-    padding-left: 2px;
-    padding-right: 2px;
+    padding-left: 0px;
+    padding-right: 0px;
     margin-bottom: 2px;
 }
 
 .dynamic-filter .filter-element {
-    padding-left: 2px;
+    padding-left: 0px;
     padding-right: 2px;
     margin-bottom: 2px;
 }
+
+.dynamic-filter .dropdown-menu {
+    left: auto;
+    right: 0px;
+}
+
