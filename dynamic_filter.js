@@ -7,8 +7,8 @@
         var template = '' +
         '<div class="dynamic-filter">'+
             '<div class="field-selector col-sm-3 pull-right">' +
-                '<div class="input-group input-group-sm pull-right">' +
-                    '<div class="input-group input-group-sm">' +
+                '<div class="input-group  pull-right">' +
+                    '<div class="input-group ">' +
                         '<div class="input-group-btn">' +
                             '<button tabindex=-1 type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">' +
                                 '<span class="fa fa-plus"></span> Field '+
@@ -30,7 +30,7 @@
                                 '<li class="dfw-preset dropdown-header">Presets</li>' +
                                 '<li class="dfw-saved  dropdown-header">Saved</li>' +
                             '</ul>' +
-                            '<button tabindex=-1 class="btn btn-sm btn-default" type="submit">' +
+                            '<button tabindex=-1 class="btn btn-default" type="submit">' +
                                 '<span class="fa fa-search"></span>' +
                             '</button>' +
                         '</div>' +
@@ -296,7 +296,7 @@
             var field_markup = ''+
                 '<div data-field="' + field + '" class="filter-element ' + field_spec.wrapper_class + ' pull-left">'+
                     '<input class="dfw-field-name-value" type="hidden" name="' + field_name + '" value="' + field + '">' +
-                        '<div class="input-group input-group-sm">' +
+                        '<div class="input-group">' +
                             '<div class="input-group-btn">' +
                                 '<label class="btn btn-default" for="' + id + '"><span class="'+ field_spec.icon_class +'"></span> ' + field_spec.label + '</label>' +
                                 (
