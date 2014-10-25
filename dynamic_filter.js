@@ -6,7 +6,7 @@
 
         var template = '' +
         '<div class="dynamic-filter">'+
-            '<div class="field-selector col-sm-3 pull-right">' +
+            '<div class="field-selector col-sm-2 pull-right">' +
                 '<div class="input-group  pull-right">' +
                     '<div class="input-group ">' +
                         '<div class="input-group-btn">' +
@@ -50,6 +50,8 @@
         this.submit_button = this.root.find("button[type='submit']");
         
         this.setOptions(options);
+
+        this.restoreState();
 
         var self = this;
         var debouncedSubmit = _.debounce( function() {
@@ -211,7 +213,16 @@
             _.each( filter_fields ,function( filter_field ){
                 if(check_persistent_fields && _.find(this.persistent_filter,function( persistent_field ) { return persistent_field.f == filter_field.f } ) ) {
                     var f_el = this.root.find('.filter-element[data-field="'+filter_field.f+'"]');
-                    f_el.find('input.dfw-field-value').val(filter_field.v).trigger('change');
+
+                    var $input = f_el.find('input.dfw-field-value');
+                    var field_spec = this.getFieldSpec( filter_field.f );
+
+                    if( _.isObject(field_spec.select2) ) {
+                        $input.select2('data',filter_field.v);
+                    } else {
+                        $input.val(filter_field.v).trigger('change');
+                    }
+
                 } else {
                     this.addField(filter_field.f, filter_field.o, filter_field.v);
                 }
@@ -297,8 +308,8 @@
                 '<div data-field="' + field + '" class="filter-element ' + field_spec.wrapper_class + ' pull-left">'+
                     '<input class="dfw-field-name-value" type="hidden" name="' + field_name + '" value="' + field + '">' +
                         '<div class="input-group">' +
-                            '<div class="input-group-btn">' +
-                                '<label class="btn btn-default" for="' + id + '"><span class="'+ field_spec.icon_class +'"></span> ' + field_spec.label + '</label>' +
+                            '<div class="input-group-addon">' +
+                                '<label for="' + id + '"><span class="'+ field_spec.icon_class +'"></span> ' + field_spec.label + '</label>' +
                                 (
                                 (field_spec.operators.length > 1) ?
                                     '<button tabindex=-1 class="btn btn-default dfw-field-op-btn dropdown-toggle" data-toggle="dropdown">' + op + '</button>' +
@@ -310,7 +321,7 @@
                                     ''
                                 ) +
                             '</div>' +
-                            '<input class="form-control dfw-field-value" tabindex=' + tabindex + ' name="' + value_name + '" value="' + value + '" id="' + id + '">' +
+                            '<input class="form-control dfw-field-value" tabindex=' + tabindex + ' name="' + value_name + '" id="' + id + '">' +
                             '<a tabindex=-1 class="dfw-field-action input-group-addon" href="#" title="Remove">' +
                                 '<span class="fa"></span>' +
                             '</a>' +
@@ -322,9 +333,14 @@
             this.adjustFieldAction(v);
 
             if( _.isObject(field_spec.select2) && _.isFunction($.fn.select2) ) {
-                v.find("input.dfw-field-value").select2(field_spec.select2);
+                var $input = v.find("input.dfw-field-value");
+                $input.select2(field_spec.select2);
+                $input.select2('data',value);
             } else if( _.isObject(field_spec.daterangepicker) && _.isFunction($.fn.daterangepicker) ) {
                 v.find("input.dfw-field-value").daterangepicker(field_spec.daterangepicker);
+                v.find("input.dfw-field-value").val(value)
+            } else {
+                v.find("input.dfw-field-value").val(value)
             }
 
             return v;
@@ -421,13 +437,25 @@
         
         ,getCurrentFilter: function() {
             var fields = [];
+            var self = this;
             this.root.find('.filter-element').each(function(idx, dom ) {
-                var el=$(dom);
-                var field = {
-                    f: el.find("input.dfw-field-name-value").val(),
-                    o: el.find("input.dfw-field-op-value").val(),
-                    v: el.find("input.dfw-field-value").val()
+                var $el=$(dom);
+                var field_name = $el.data('field');
+                var field_spec = self.getFieldSpec( field_name );
+
+                var $input = $el.find("input.dfw-field-value");
+                var value = $input.val();
+
+                if( _.isObject(field_spec.select2) ) {
+                    console.log('select2 field !');
+                    value = $input.select2('data')
                 }
+
+                var field = {
+                    f: field_name,
+                    o: $el.find("input.dfw-field-op-value").val(),
+                    v: value
+                };
                 fields.push( field );
             });
             return fields;            
@@ -444,7 +472,12 @@
             if( this.store )
                 this.store.set(this.state_id, this.getState());        
         },
-        
+
+        restoreState: function() {
+            if( this.store )
+                this.applyState(this.store.get(this.state_id));
+        },
+
         applyState: function( state ) {
             if(_.isObject(state) && _.isObject(state.saved_filters) )
                 this.setSavedFilters( state.saved_filters );
