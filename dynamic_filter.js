@@ -356,12 +356,17 @@
             var field = wrapper_el.data('field');
             var input_el = wrapper_el.find('input.form-control');
             var span_el = wrapper_el.find('a.dfw-field-action > span');
-            
+            var field_spec = this.getFieldSpec( field );
+
             if( span_el.data('action') == 'remove' ) {
                 wrapper_el.remove();
                 this.root.find('ul.dfw-field-list > li > a[data-field="' + field + '"]').show();
             } else {
-                input_el.val('').trigger('change');
+                if( _.isObject(field_spec.select2) && _.isFunction($.fn.select2) ) {
+                    input_el.select2('data',[]).trigger('change');
+                } else {
+                    input_el.val('').trigger('change');
+                }
                 this.adjustFieldAction(wrapper_el);
             }
             input_el.focus();
