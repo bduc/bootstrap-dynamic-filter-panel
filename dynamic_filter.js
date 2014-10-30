@@ -99,7 +99,6 @@
             .on('click.dynamic_filter', 'ul.dfw-save-menu > li > a > span.fa-trash',
                 $.proxy(function( event ) {
                     event.preventDefault();
-                    console.log('remove filter',event);
                     var name = $(event.target).closest("a[data-saved]").data('saved');
                     
                     if( confirm("Are you sure you want to remove " + name + "?") ) {
@@ -447,7 +446,6 @@
                 var value = $input.val();
 
                 if( _.isObject(field_spec.select2) ) {
-                    console.log('select2 field !');
                     value = $input.select2('data')
                 }
 
