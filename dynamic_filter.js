@@ -334,7 +334,7 @@
             if( _.isObject(field_spec.select2) && _.isFunction($.fn.select2) ) {
                 var $input = v.find("input.dfw-field-value");
                 $input.select2(field_spec.select2);
-                $input.select2('data',value);
+                $input.select2('val',value);
             } else if( _.isObject(field_spec.daterangepicker) && _.isFunction($.fn.daterangepicker) ) {
                 v.find("input.dfw-field-value").daterangepicker(field_spec.daterangepicker);
                 v.find("input.dfw-field-value").val(value)
@@ -451,7 +451,7 @@
                 var value = $input.val();
 
                 if( _.isObject(field_spec.select2) ) {
-                    value = $input.select2('data')
+                    value = $input.select2('val')
                 }
 
                 var field = {
