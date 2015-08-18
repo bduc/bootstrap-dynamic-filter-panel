@@ -6,12 +6,12 @@
 
         var template = '' +
         '<div class="dynamic-filter">'+
-            '<div class="field-selector col-sm-2 pull-right">' +
+            '<div class="field-selector pull-right">' +
                 '<div class="input-group  pull-right">' +
                     '<div class="input-group ">' +
                         '<div class="input-group-btn">' +
                             '<button tabindex=-1 type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">' +
-                                '<span class="fa fa-plus"></span> Field '+
+                                //'<span class="fa fa-plus"></span>'+
                                 '<span class="fa fa-caret-down"></span>' +
                             '</button>' +
                             '<ul class="dfw-field-list dropdown-menu" role="menu">' +
@@ -19,21 +19,24 @@
                             '<button tabindex=-1 class="dfw-remove-filters btn btn-default" type="button">' +
                                 '<span class="fa fa-minus"></span>' +
                             '</button>' +
-                        '</div>' +  
-                        '<div class="input-group-btn">' +
-                            '<button tabindex=-1 class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">' +
-                                '<span class="fa fa-save"></span>' +
-                            '</button>' +
-                            '<ul class="dropdown-menu dfw-save-menu" role="menu">' +
-                                '<li><a class="dfw-save" href="javascript: false;"><span class="fa fa-save"></span> Save</a></li>' +
-                                '<li class="divider"></li>' +
-                                '<li class="dfw-preset dropdown-header">Presets</li>' +
-                                '<li class="dfw-saved  dropdown-header">Saved</li>' +
-                            '</ul>' +
                             '<button tabindex=-1 class="btn btn-default" type="submit">' +
-                                '<span class="fa fa-search"></span>' +
+                            '<span class="fa fa-search"></span>' +
                             '</button>' +
                         '</div>' +
+                        //'<div class="input-group-btn">' +
+                        //    '<button tabindex=-1 class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">' +
+                        //        '<span class="fa fa-save"></span>' +
+                        //    '</button>' +
+                        //    '<ul class="dropdown-menu dfw-save-menu" role="menu">' +
+                        //        '<li><a class="dfw-save" href="javascript: false;"><span class="fa fa-save"></span> Save</a></li>' +
+                        //        '<li class="divider"></li>' +
+                        //        '<li class="dfw-preset dropdown-header">Presets</li>' +
+                        //        '<li class="dfw-saved  dropdown-header">Saved</li>' +
+                        //    '</ul>' +
+                        //    '<button tabindex=-1 class="btn btn-default" type="submit">' +
+                        //        '<span class="fa fa-search"></span>' +
+                        //    '</button>' +
+                        //'</div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
@@ -173,8 +176,8 @@
                 this.applyState(options.state);
             }
             
-            if( _.isObject(options.params) && _.isObject(options.params.f) ) {
-                this.loadFilter(options.params.f);
+            if( _.isObject(options.params) && _.isObject(options.params) ) {
+                this.loadFilter(options.params);
             }
         }
 
@@ -285,9 +288,9 @@
                 this.root.find('ul.dfw-field-list > li > a[data-field="' + field + '"]').hide();
             }
             
-            var field_name = "df[f][][f]";
-            var value_name = "df[f][][v]";
-            var op_name    = "df[f][][o]";
+            var field_name = "f[][f]";
+            var value_name = "f[][v]";
+            var op_name    = "f[][o]";
             
             var id = _.uniqueId(field);
 
@@ -307,12 +310,12 @@
                 '<div data-field="' + field + '" class="filter-element ' + field_spec.wrapper_class + ' pull-left">'+
                     '<input class="dfw-field-name-value" type="hidden" name="' + field_name + '" value="' + field + '">' +
                         '<div class="input-group">' +
-                            '<div class="input-group-addon">' +
-                                '<label for="' + id + '"><span class="'+ field_spec.icon_class +'"></span> ' + field_spec.label + '</label>' +
+                            '<div class="input-group-btn">' +
+                                '<label class="btn btn-default" for="' + id + '"><span class="'+ field_spec.icon_class +'"></span> ' + field_spec.label + '</label>' +
                                 (
                                 (field_spec.operators.length > 1) ?
                                     '<button tabindex=-1 class="btn btn-default dfw-field-op-btn dropdown-toggle" data-toggle="dropdown">' + op + '</button>' +
-                                    '<ul class="dropdown-menu dfw-field-op-list">' +
+                                    '<ul class="dropdown-menu dropdown-menu-left dfw-field-op-list">' +
                                         op_list_markup +
                                     '</ul>' +
                                     '<input class="dfw-field-op-value" type="hidden" name="' + op_name + '" value="' + op + '">'
