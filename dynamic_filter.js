@@ -2,7 +2,7 @@
     "use strict";
     
     var DynamicFilter = function (element, options) {
-        this.container = $(element);
+        this.$container = $(element);
 
         var template = '' +
         '<div class="dynamic-filter">'+
@@ -47,10 +47,10 @@
         if (typeof options !== 'object' || options === null)
             options = {};
 
-        this.container.html(template);
-        this.root = this.container.find('.dynamic-filter').first();
+        this.$container.html(template);
+        this.$root = this.$container.find('.dynamic-filter').first();
         
-        this.submit_button = this.root.find("button[type='submit']");
+        this.submit_button = this.$root.find("button[type='submit']");
         
         this.setOptions(options);
 
@@ -61,7 +61,7 @@
             self.submit_button.trigger('click');
         }, 400);
         
-        this.root
+        this.$root
             .on('click.dynamic_filter', 'ul.dfw-field-list > li > a', 
                 $.proxy(function( event ) {
                     event.preventDefault();
@@ -74,7 +74,7 @@
                     event.preventDefault();
                     this.removeAllFields();
                     this.loadFilter(this.persistent_filter);
-                    this.root.find(".filter-element input").first().focus();
+                    this.$root.find(".filter-element input").first().focus();
                     self.submit_button.trigger('click');
                 }, this) )
 
@@ -129,9 +129,9 @@
                     this.adjustFieldAction( wrapper_el );
                     var field = wrapper_el.data('field');
                     //this.submit_button.removeClass('btn-default').addClass('btn-primary');
-                    if( field == 'quick' ) {
-                        debouncedSubmit();                    
-                    }
+                    //if( field == 'quick' ) {
+                    //    debouncedSubmit();
+                    //}
                 },this) )
             
             .on('click.dynamic_filter',  'button[type=submit]',
@@ -182,7 +182,7 @@
         }
 
         ,setFieldSpecs: function( fields ) {
-            var el = this.root.find('ul.dfw-field-list');
+            var el = this.$root.find('ul.dfw-field-list');
             this.fields_specs = fields;
             for( var field in this.fields_specs ) {
                 var label = this.fields_specs[ field ].label || field;
@@ -191,7 +191,7 @@
         }
         
         ,setPresetFilters: function( filters ) {
-            var menu_el = this.root.find('ul.dfw-save-menu');
+            var menu_el = this.$root.find('ul.dfw-save-menu');
             
             menu_el.find("a[data-preset]").closest('li').remove();
 
@@ -211,10 +211,10 @@
         ,loadFilter: function( filter_fields ) {
             // if loadFilter is called on a empty container than I expect you're loading persistent-filter
             // if it's not empty than persistent fields are not load again
-            var check_persistent_fields = this.root.find(".filter-element").length > 0;
+            var check_persistent_fields = this.$root.find(".filter-element").length > 0;
             _.each( filter_fields ,function( filter_field ){
                 if(check_persistent_fields && _.find(this.persistent_filter,function( persistent_field ) { return persistent_field.f == filter_field.f } ) ) {
-                    var f_el = this.root.find('.filter-element[data-field="'+filter_field.f+'"]');
+                    var f_el = this.$root.find('.filter-element[data-field="'+filter_field.f+'"]');
 
                     var $input = f_el.find('input.dfw-field-value');
                     var field_spec = this.getFieldSpec( filter_field.f );
@@ -225,6 +225,13 @@
                         $input.val(filter_field.v).trigger('change');
                     }
 
+                    // also set the operator if present
+                    var $button_el = f_el.find('button.dfw-field-op-btn');
+                    var $input_el = f_el.find('input.dfw-field-op-value');
+
+                    $button_el.text( filter_field.o );
+                    $input_el.val( filter_field.o );
+
                 } else {
                     this.addField(filter_field.f, filter_field.o, filter_field.v);
                 }
@@ -234,9 +241,9 @@
 //        ,markFilter: function( name ) {
 //            var filter = _.find(this.preset_filters,function(filter) { return filter.name == name } );
 //            if( filter ) {
-//                this.root.find('ul.dfw-save-menu > li > a > span.fa-check').removeClass('fa-check');
-//                this.root.find('ul.dfw-save-menu > li > a[data-preset="' + name + '"] > span.fa').addClass('fa-check');
-//                this.root.find('ul.dfw-save-menu > li > a[data-saved="' + name + '"] > span.fa').addClass('fa-check');
+//                this.$root.find('ul.dfw-save-menu > li > a > span.fa-check').removeClass('fa-check');
+//                this.$root.find('ul.dfw-save-menu > li > a[data-preset="' + name + '"] > span.fa').addClass('fa-check');
+//                this.$root.find('ul.dfw-save-menu > li > a[data-saved="' + name + '"] > span.fa').addClass('fa-check');
 //            }            
 //        }
         
@@ -281,11 +288,11 @@
             if( !field_spec.multiple ) {
                 
                 // multi instances not allowed
-                if( this.root.find('.filter-element[data-field="' + field + '"]').length > 0 ) {
+                if( this.$root.find('.filter-element[data-field="' + field + '"]').length > 0 ) {
                     return;
                 } 
                 
-                this.root.find('ul.dfw-field-list > li > a[data-field="' + field + '"]').hide();
+                this.$root.find('ul.dfw-field-list > li > a[data-field="' + field + '"]').hide();
             }
             
             var field_name = "f[][f]";
@@ -304,7 +311,7 @@
             if( _.isUndefined(value) )
                 value = "";
 
-            var tabindex = this.root.find(".filter-element").length + 2;
+            var tabindex = this.$root.find(".filter-element").length + 2;
             
             var field_markup = ''+
                 '<div data-field="' + field + '" class="filter-element ' + field_spec.wrapper_class + ' pull-left">'+
@@ -330,13 +337,14 @@
                         '</div>' +
                 '</div>';
 
-            var v = $(field_markup).insertBefore( this.root.find('.clearfix') );
+            var v = $(field_markup).insertBefore( this.$root.find('.clearfix') );
             
-            this.adjustFieldAction(v);
-
             if( _.isObject(field_spec.select2) && _.isFunction($.fn.select2) ) {
                 var $input = v.find("input.dfw-field-value");
                 $input.select2(field_spec.select2);
+                if(_.isString(value)) {
+                    value = value.split(',')
+                }
                 $input.select2('val',value);
             } else if( _.isObject(field_spec.daterangepicker) && _.isFunction($.fn.daterangepicker) ) {
                 v.find("input.dfw-field-value").daterangepicker(field_spec.daterangepicker);
@@ -345,12 +353,14 @@
                 v.find("input.dfw-field-value").val(value)
             }
 
+            this.adjustFieldAction(v);
+
             return v;
         }
 
         ,removeAllFields: function( event ) {
-            this.root.find('.filter-element').remove();
-            this.root.find('ul.dfw-field-list > li > a[data-field]').show();
+            this.$root.find('.filter-element').remove();
+            this.$root.find('ul.dfw-field-list > li > a[data-field]').show();
         }
 
         ,onFieldAction: function( event ) {
@@ -363,7 +373,7 @@
 
             if( span_el.data('action') == 'remove' ) {
                 wrapper_el.remove();
-                this.root.find('ul.dfw-field-list > li > a[data-field="' + field + '"]').show();
+                this.$root.find('ul.dfw-field-list > li > a[data-field="' + field + '"]').show();
             } else {
                 if( _.isObject(field_spec.select2) && _.isFunction($.fn.select2) ) {
                     input_el.select2('data',[]).trigger('change');
@@ -401,12 +411,14 @@
             
             button_el.text( a_el.data('op') );
             input_el.val( a_el.data('op') );
+
             wrapper_el.find('input.dfw-field-value').focus();
+            this.submit_button.removeClass('btn-default').addClass('btn-primary');
         }
 
         ,remove: function() {
-            this.root.off('.dynamic_filter');
-            this.root.removeData('dynamic_filter');
+            this.$root.off('.dynamic_filter');
+            this.$root.removeData('dynamic_filter');
         }
 
         ,loadSavedFilter: function( name ) {
@@ -419,7 +431,7 @@
         }
 
         ,setSavedFilters: function( filters ) {
-            var menu_el = this.root.find('ul.dfw-save-menu');
+            var menu_el = this.$root.find('ul.dfw-save-menu');
 
             menu_el.find("a[data-saved]").closest('li').remove();
 
@@ -445,7 +457,7 @@
         ,getCurrentFilter: function() {
             var fields = [];
             var self = this;
-            this.root.find('.filter-element').each(function(idx, dom ) {
+            this.$root.find('.filter-element').each(function(idx, dom ) {
                 var $el=$(dom);
                 var field_name = $el.data('field');
                 var field_spec = self.getFieldSpec( field_name );
